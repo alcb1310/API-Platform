@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CheeseListingRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
@@ -34,6 +37,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     ],
     shortName: 'cheeses'
 )]
+#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'description' => 'partial'])]
+#[ApiFilter(BooleanFilter::class, properties:['isPublished'])]
 class CheeseListing
 {
     #[ORM\Id]
