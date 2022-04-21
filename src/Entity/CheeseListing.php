@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CheeseListingRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
 #[ApiResource(
@@ -70,9 +71,10 @@ class CheeseListing
     #[ORM\Column(type: 'boolean')]
     private $isPublished = false;
 
-    public function __construct()
+    public function __construct(string $title = null)
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->title = $title;
     }
 
     public function getId(): ?int
@@ -85,18 +87,25 @@ class CheeseListing
         return $this->title;
     }
 
-    public function setTitle(string $title): self
-    {
-        $this->title = $title;
+    // public function setTitle(string $title): self
+    // {
+    //     $this->title = $title;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getDescription(): ?string
     {
         return $this->description;
     }
     public function setText(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
@@ -110,6 +119,7 @@ class CheeseListing
      * The description of the cheese as raw text
      *
      */
+    #[SerializedName('description')]
     public function setTextDescription(string $description): self
     {
         $this->description = nl2br($description);
