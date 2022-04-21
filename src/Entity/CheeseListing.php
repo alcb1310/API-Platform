@@ -7,7 +7,18 @@ use App\Repository\CheeseListingRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations:[
+        'get', 'post'
+    ],
+    itemOperations: [
+        'get' => [
+            'path' => '/icheeses/{id}'
+        ],
+        'put'
+    ],
+    shortName: 'cheeses'
+)]
 class CheeseListing
 {
     #[ORM\Id]
