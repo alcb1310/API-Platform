@@ -22,6 +22,10 @@ class CheeseListing
     private $description;
 
     #[ORM\Column(type: 'integer')]
+    /**
+     * The price of this delicious cheese in cents
+     *
+     */
     private $price;
 
     #[ORM\Column(type: 'datetime')]
