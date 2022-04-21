@@ -8,7 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CheeseListingRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
@@ -35,10 +37,15 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         ],
         'swagger_definition_name' => 'write'
     ],
-    shortName: 'cheeses'
+    shortName: 'cheeses',
+    attributes:[
+        'pagination_items_per_page' => 10,
+    ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'description' => 'partial'])]
 #[ApiFilter(BooleanFilter::class, properties:['isPublished'])]
+#[ApiFilter(RangeFilter::class, properties:['price'])]
+#[ApiFilter(PropertyFilter::class)]
 class CheeseListing
 {
     #[ORM\Id]
@@ -102,6 +109,18 @@ class CheeseListing
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    #[Groups(
+        'cheese_listing:read'
+    )]
+    public function getShortDescription(): ?string
+    {
+        if (strlen($this->description) < 40){
+            return $this->description;
+        }
+
+        return substr($this->description, 0, 40) . '...';
     }
     public function setText(string $description): self
     {
