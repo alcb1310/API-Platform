@@ -40,6 +40,13 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     shortName: 'cheeses',
     attributes:[
         'pagination_items_per_page' => 10,
+        'formats' => [
+            'jsonld',
+            'json',
+            'jsonhal',
+            'html',
+            'csv' =>  ['text/csv']
+        ]
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'description' => 'partial'])]

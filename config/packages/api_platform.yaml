@@ -1,7 +1,39 @@
+# prettier-ignore
 api_platform:
+      # prettier-ignore
     mapping:
-        paths: ['%kernel.project_dir%/src/Entity']
+      # prettier-ignore
+        paths: ["%kernel.project_dir%/src/Entity"]
+      # prettier-ignore
     patch_formats:
-        json: ['application/merge-patch+json']
+      # prettier-ignore
+        json: ["application/merge-patch+json"]
+      # prettier-ignore
     swagger:
+      # prettier-ignore
         versions: [3]
+      # prettier-ignore
+    formats:
+      # prettier-ignore
+        jsonld:
+      # prettier-ignore
+            mime_types:
+      # prettier-ignore
+                - application/ld+json
+        json:
+      # prettier-ignore
+            mime_types:
+      # prettier-ignore
+                - application/json
+      # prettier-ignore
+        html:
+      # prettier-ignore
+            mime_types:
+      # prettier-ignore
+                - text/html
+      # prettier-ignore
+        jsonhal:
+      # prettier-ignore
+            mime_types:
+      # prettier-ignore
+                - application/hal+json
