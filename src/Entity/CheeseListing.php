@@ -2,17 +2,20 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
 use Carbon\Carbon;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use App\Repository\CheeseListingRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Filter\Validator\Length;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\SerializedName;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 #[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
 #[ApiResource(
@@ -65,12 +68,19 @@ class CheeseListing
         'cheese_listing:read',
         'cheese_listing:write'
     ])]
+    #[Assert\NotBlank()]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        maxMessage: "Describe your cheese in 50 characters or less"
+    )]
     private $title;
 
     #[ORM\Column(type: 'text')]
     #[Groups([
         'cheese_listing:read'
     ])]
+    #[Assert\NotBlank()]
     private $description;
 
     #[ORM\Column(type: 'integer')]
@@ -82,6 +92,7 @@ class CheeseListing
         'cheese_listing:read',
         'cheese_listing:write'
     ])]
+    #[Assert\NotBlank()]
     private $price;
 
     #[ORM\Column(type: 'datetime')]
