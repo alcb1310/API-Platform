@@ -22,6 +22,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
     ],
     itemOperations: [
         'get' => [
+            'normalization_context' => [
+                'groups' => [
+                    'cheese_listing:read',
+                    'cheese_listing:item:get'
+                ]
+            ]
             // 'path' => '/icheeses/{id}'
         ],
         'put'
@@ -50,7 +56,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
         ]
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'description' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: [
+    'title' => 'partial',
+    'description' => 'partial',
+    'owner' => 'exact',
+    'owner.username' => 'partial'
+])]
 #[ApiFilter(BooleanFilter::class, properties:['isPublished'])]
 #[ApiFilter(RangeFilter::class, properties:['price'])]
 #[ApiFilter(PropertyFilter::class)]
@@ -64,7 +75,9 @@ class CheeseListing
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups([
         'cheese_listing:read',
-        'cheese_listing:write'
+        'cheese_listing:write',
+        'user:read',
+        'user:write'
     ])]
     #[Assert\NotBlank()]
     #[Assert\Length(
@@ -76,7 +89,8 @@ class CheeseListing
 
     #[ORM\Column(type: 'text')]
     #[Groups([
-        'cheese_listing:read'
+        'cheese_listing:read',
+        'user:read'
     ])]
     #[Assert\NotBlank()]
     private $description;
@@ -88,7 +102,9 @@ class CheeseListing
      */
     #[Groups([
         'cheese_listing:read',
-        'cheese_listing:write'
+        'cheese_listing:write',
+        'user:read',
+        'user:write'
     ])]
     #[Assert\NotBlank()]
     private $price;
@@ -98,6 +114,15 @@ class CheeseListing
 
     #[ORM\Column(type: 'boolean')]
     private $isPublished = false;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'cheeseListings')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'cheese_listing:read',
+        'cheese_listing:write'
+    ])]
+    #[Assert\Valid()]
+    private $owner;
 
     public function __construct(string $title = null)
     {
@@ -153,7 +178,8 @@ class CheeseListing
     }
 
     #[Groups([
-        'cheese_listing:write'
+        'cheese_listing:write',
+        'user:write'
     ])]
     /**
      * The description of the cheese as raw text
@@ -185,7 +211,8 @@ class CheeseListing
     }
 
     #[Groups([
-        'cheese_listing:read'
+        'cheese_listing:read',
+        'cheese_listing:item:get',
     ])]
     /**
      * How long ago this cheese listing was added
@@ -204,6 +231,18 @@ class CheeseListing
     public function setIsPublished(bool $isPublished): self
     {
         $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }
